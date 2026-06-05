@@ -1,0 +1,159 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // --- GLOBAL HELPERS (PHASE 3) ---
+    function isSignedIn() {
+      return request.auth != null;
+    }
+    
+    function isAdmin() {
+      return isSignedIn() && (
+        exists(/databases/$(database)/documents/admins/$(request.auth.uid)) ||
+        request.auth.token.email == 'albasha.albasha4454@gmail.com'
+      );
+    }
+    
+    function getUserRole() {
+      return get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role;
+    }
+    
+    function isOwner(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
+
+    function incoming() {
+      return request.resource.data;
+    }
+
+    function existing() {
+      return resource.data;
+    }
+
+    function isValidId(id) {
+      return id is string && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    // --- VALIDATION BLUEPRINTS (PHASE 4) ---
+    function isValidUser(data) {
+      return data.username is string && data.username.size() >= 3 && data.username.size() <= 50
+             && data.role in ['admin', 'cashier']
+             && data.keys().hasAll(['username', 'passwordHash', 'salt', 'role'])
+             && data.keys().size() <= 6; // Allow username, role, passwordHash, salt, id, email
+    }
+
+    function isValidProduct(data) {
+      return data.name is string && data.name.size() > 0 && data.name.size() <= 200
+             && data.type in ['product', 'service']
+             && data.quantity is number
+             && data.price is number && data.price >= 0
+             && data.keys().hasAll(['name', 'type', 'quantity', 'price']);
+    }
+
+    function isValidInvoice(data) {
+      return data.date is string // simplified for now, usually use timestamp
+             && data.items is list && data.items.size() > 0
+             && data.total is number && data.total >= 0
+             && data.type in ['sale', 'return', 'shipping', 'reservation']
+             && data.status in ['pending', 'completed', 'cancelled', 'shipped']
+             && data.paymentStatus in ['paid', 'unpaid', 'partial'];
+    }
+
+    function isValidAuditLog(data) {
+      return data.timestamp == request.time
+             && data.userId == request.auth.uid
+             && data.action is string
+             && data.details is string;
+    }
+
+    // --- ACCESS RULES ---
+
+    // Default Deny
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    match /admins/{adminId} {
+      allow read: if isSignedIn();
+      allow write: if false; // Managed via GCP console or migrations
+    }
+
+    match /users/{userId} {
+      allow read: if true;
+      allow create: if (isAdmin() || !exists(/databases/$(database)/documents/users/bootstrap_admin)) && isValidUser(incoming());
+      allow update: if isAdmin() && isValidUser(incoming());
+      allow delete: if isAdmin();
+    }
+
+    match /products/{productId} {
+      allow read: if isSignedIn();
+      allow create: if isAdmin() && isValidProduct(incoming()) && isValidId(productId);
+      allow update: if isSignedIn() && isValidProduct(incoming()) && (
+        isAdmin() || 
+        (getUserRole() == 'cashier' && incoming().diff(existing()).affectedKeys().hasOnly(['quantity', 'allocated']))
+      );
+      allow delete: if isAdmin();
+    }
+
+    match /customers/{customerId} {
+      allow read: if isSignedIn();
+      allow create, update: if isSignedIn();
+      allow delete: if isAdmin();
+    }
+
+    match /suppliers/{supplierId} {
+      allow read: if isSignedIn();
+      allow create, update, delete: if isAdmin();
+    }
+
+    match /invoices/{invoiceId} {
+      allow read: if isSignedIn();
+      allow create: if isSignedIn() && isValidInvoice(incoming());
+      allow update: if isAdmin() || (
+        isSignedIn() && incoming().diff(existing()).affectedKeys().hasOnly(['status', 'paymentStatus', 'paidDate'])
+      );
+      allow delete: if isAdmin();
+    }
+
+    match /expenses/{expenseId} {
+      allow read, create: if isSignedIn();
+      allow update, delete: if isAdmin();
+    }
+
+    match /accounts/{accountId} {
+      allow read: if isSignedIn();
+      allow create, update, delete: if isAdmin();
+    }
+
+    match /transactions/{transactionId} {
+      allow read: if isSignedIn();
+      allow create: if isSignedIn();
+      allow update, delete: if isAdmin();
+    }
+
+    match /auditLogs/{logId} {
+      allow get: if isAdmin();
+      allow list: if isAdmin();
+      allow create: if isSignedIn() && isValidAuditLog(incoming());
+      allow update, delete: if false; // Immutable logs
+    }
+
+    match /recycleBin/{itemId} {
+      allow read: if isAdmin();
+      allow create: if isAdmin();
+      allow delete: if isAdmin();
+      allow update: if false;
+    }
+
+    match /backups/{backupId} {
+      allow read, create, update, delete: if isAdmin();
+    }
+
+    match /resetRequests/{requestId} {
+      allow read: if isAdmin();
+      allow create: if isAdmin();
+      allow update: if isAdmin();
+      allow delete: if false;
+    }
+  }
+}
