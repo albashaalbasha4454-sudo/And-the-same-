@@ -1,5 +1,5 @@
 import React, { useMemo, useState } from 'react';
-import { BarChart3, BookOpen, Calendar, Edit2, FileDown, Moon, Package, PenTool, Plus, Search, Sparkles, Trash2 } from 'lucide-react';
+import { BookOpen, Calendar, FileDown, Moon, Package, PenTool, Plus, Search, Sparkles, Trash2, Edit2 } from 'lucide-react';
 import type { Product, User } from '../types';
 
 interface DailySalonViewVIPProps {
@@ -7,7 +7,7 @@ interface DailySalonViewVIPProps {
   currentUser: User;
 }
 
-type VipTab = 'overview' | 'diwan' | 'sleep' | 'planner' | 'market' | 'files';
+type Tab = 'overview' | 'diwan' | 'sleep' | 'planner' | 'market' | 'files';
 
-const tabs: { id: VipTab; label: string; icon: React.ElementType }[] = [
-  { id: 'overview', label:
+export const DailySalonViewVIP: React.FC<DailySalonViewVIPProps> = ({ products, currentUser }) => {
+  const [tab, setTab] = use
