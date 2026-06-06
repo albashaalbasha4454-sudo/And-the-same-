@@ -1,5 +1,19 @@
 import React, { useMemo, useState } from 'react';
-import { BookOpen, Calendar, FileDown, Moon, Package, PenTool, Plus, Search, Sparkles, Trash2, Edit2, Archive, Eye, CheckCircle2 } from 'lucide-react';
+import {
+  Archive,
+  BookOpen,
+  Calendar,
+  CheckCircle2,
+  Edit2,
+  Eye,
+  FileDown,
+  Moon,
+  Package,
+  PenTool,
+  Search,
+  Sparkles,
+  Trash2,
+} from 'lucide-react';
 import type { Product, User } from '../types';
 
 interface DailySalonViewVIPProps {
@@ -9,4 +23,5 @@ interface DailySalonViewVIPProps {
 
 type Tab = 'overview' | 'diwan' | 'sleep' | 'planner' | 'market' | 'files';
 
-t
+const tabs: { id: Tab; label: string; icon: React.ElementType }[] = [
+  {
