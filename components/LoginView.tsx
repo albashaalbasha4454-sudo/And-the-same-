@@ -140,23 +140,7 @@ const LoginView: React.FC<LoginViewProps> = ({ onLogin }) => {
               )}
             </button>
 
-            <div className="mt-4 pt-4 border-t border-slate-100 text-center">
-              <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">معلومات الدخول الأساسية</p>
-              <div className="bg-slate-50/80 border border-slate-200/60 rounded-xl p-3 flex flex-col gap-2 text-right">
-                <div className="flex justify-between items-center text-[11px] font-bold text-slate-600">
-                  <span>اسم المستخدم:</span>
-                  <span className="font-mono bg-slate-200/50 px-2 py-0.5 rounded text-slate-800 select-all">admin</span>
-                </div>
-                <div className="flex justify-between items-center text-[11px] font-bold text-slate-600">
-                  <span>كلمة المرور:</span>
-                  <span className="font-mono bg-slate-200/50 px-2 py-0.5 rounded text-slate-800 select-all">albasha.123</span>
-                </div>
-                <div className="flex justify-between items-center text-[11px] font-bold text-slate-600">
-                  <span>رقم الاشتراك:</span>
-                  <span className="font-mono bg-indigo-50 px-2 py-0.5 rounded text-indigo-700 select-all">BK-2026</span>
-                </div>
-              </div>
-            </div>
+            {/* Removed default login credentials display for security compliance */}
           </form>
         </div>
 

@@ -175,6 +175,54 @@
             "status": { "type": "string", "enum": ["pending", "approved", "completed", "cancelled"] }
         },
         "required": ["requestedAt", "requestedBy", "approvals", "scheduledAt", "status"]
+    },
+    "Poem": {
+        "title": "Poem",
+        "description": "Poetry collection and expressions",
+        "type": "object",
+        "properties": {
+            "title": { "type": "string" },
+            "author": { "type": "string" },
+            "content": { "type": "string" },
+            "category": { "type": "string" },
+            "createdAt": { "type": "string", "format": "date-time" },
+            "userId": { "type": "string" },
+            "notes": { "type": "string" },
+            "linkedBookId": { "type": "string" },
+            "linkedBookName": { "type": "string" }
+        },
+        "required": ["title", "author", "content", "createdAt", "userId"]
+    },
+    "DailyTask": {
+        "title": "Daily Task",
+        "description": "Individual checklist items for daily planning",
+        "type": "object",
+        "properties": {
+            "title": { "type": "string" },
+            "priority": { "type": "string", "enum": ["high", "medium", "low"] },
+            "status": { "type": "string", "enum": ["pending", "completed"] },
+            "date": { "type": "string" },
+            "timeBlock": { "type": "string" },
+            "notes": { "type": "string" },
+            "userId": { "type": "string" }
+        },
+        "required": ["title", "priority", "status", "date", "userId"]
+    },
+    "ReadingProgress": {
+        "title": "Reading Progress",
+        "description": "Books personal reading tracker",
+        "type": "object",
+        "properties": {
+            "productId": { "type": "string" },
+            "productName": { "type": "string" },
+            "currentPage": { "type": "number" },
+            "totalPages": { "type": "number" },
+            "status": { "type": "string", "enum": ["reading", "completed", "paused"] },
+            "notes": { "type": "string" },
+            "lastReadDate": { "type": "string", "format": "date-time" },
+            "userId": { "type": "string" }
+        },
+        "required": ["productId", "productName", "currentPage", "totalPages", "status", "lastReadDate", "userId"]
     }
   },
   "firestore": {
@@ -223,8 +271,20 @@
       "description": "Backup logs"
     },
     "/resetRequests/{requestId}": {
-        "schema": "ResetRequest",
-        "description": "System reset authorization chain"
+      "schema": "ResetRequest",
+      "description": "System reset authorization chain"
+    },
+    "/poems/{poemId}": {
+      "schema": "Poem",
+      "description": "Custom and traditional poems"
+    },
+    "/dailyTasks/{taskId}": {
+      "schema": "DailyTask",
+      "description": "Daily calendar tasks"
+    },
+    "/readingProgress/{progressId}": {
+      "schema": "ReadingProgress",
+      "description": "Reading metrics and goals"
     }
   }
 }

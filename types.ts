@@ -185,3 +185,39 @@ export interface TillCloseout {
   notes?: string;
   invoiceIds: string[];
 }
+
+export interface Poem {
+  id: string;
+  title: string;
+  author: string;
+  content: string; // Separated by newlines, hemistiches by *
+  category?: string;
+  createdAt: string; // ISO DateTime
+  userId: string;
+  notes?: string;
+  linkedBookId?: string;
+  linkedBookName?: string;
+}
+
+export interface DailyTask {
+  id: string;
+  title: string;
+  priority: 'high' | 'medium' | 'low';
+  status: 'pending' | 'completed';
+  date: string; // YYYY-MM-DD
+  timeBlock?: string;
+  notes?: string;
+  userId: string;
+}
+
+export interface ReadingProgress {
+  id: string;
+  productId: string; // references Product.id
+  productName: string;
+  currentPage: number;
+  totalPages: number;
+  status: 'reading' | 'completed' | 'paused';
+  notes?: string;
+  lastReadDate: string; // ISO DateTime
+  userId: string;
+}

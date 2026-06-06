@@ -31,6 +31,7 @@ import { AuditLogView } from './components/AuditLogView';
 import { RecycleBinView } from './components/RecycleBinView';
 import { DetailedSearchModal } from './components/DetailedSearchModal';
 import { useFirebase } from './components/FirebaseProvider';
+import { DailySalonView } from './components/DailySalonView';
 
 import { 
     productsService, 
@@ -53,7 +54,7 @@ import {
     Landmark, Archive, UserCog, HardDriveDownload, 
     ScrollText, Trash2, Database, Settings, 
     ChevronLeft, LogOut, Search, Bell,
-    Menu, X, ChevronRight
+    Menu, X, ChevronRight, Calendar
 } from 'lucide-react';
 import { Logo } from './components/Logo';
 import { softDelete } from './utils/recycleBin';
@@ -601,6 +602,7 @@ const App: React.FC = () => {
         reports: { element: <ReportsView invoices={invoices} products={products} expenses={expenses} />, label: "التقارير", icon: LineChart, roles: ['admin'] },
         financialSummary: { element: <FinancialSummaryView invoices={invoices} expenses={expenses} transactions={transactions} purchases={purchases} accountBalances={accountBalances} />, label: "الملخص المالي", icon: ClipboardList, roles: ['admin'] },
         pos: { element: <POSView products={products} customers={customers} onCompleteSale={onCompleteSale} onCreateShippingOrder={onCreateShippingOrder} onCreateReservation={onCreateReservation} onAddRequestedBook={onAddRequestedBook} lowStockThreshold={lowStockThreshold} />, label: "نقطة البيع", icon: ShoppingCart, roles: ['admin', 'cashier'] },
+        dailySalon: { element: <DailySalonView products={products} currentUser={currentUser} />, label: "ترتيب اليوم والأدب", icon: Calendar, roles: ['admin', 'cashier'] },
         orders: { element: <OrdersView invoices={invoices} users={users} onUpdateStatus={updateOrderStatus} onConvertToSale={onConvertToSale} processReturn={processReturn} sendReturnRequest={sendReturnRequest} currentUser={currentUser} shopName={shopName} shopAddress={shopAddress} />, label: "الطلبات", icon: Receipt, roles: ['admin', 'cashier'] },
         returnRequests: { element: <ReturnRequestsView requests={returnRequests} approveRequest={approveRequest} rejectRequest={rejectRequest} />, label: "طلبات الإرجاع", icon: ShieldCheck, roles: ['admin'] },
         products: { element: <ProductsView products={products} addProduct={addProduct} updateProduct={updateProduct} deleteProduct={deleteProduct} lowStockThreshold={lowStockThreshold} setLowStockThreshold={setLowStockThreshold} onBatchUpdate={batchUpdateProducts} />, label: "المخزون", icon: Package, roles: ['admin'] },
@@ -653,12 +655,12 @@ const App: React.FC = () => {
     };
 
     const adminSidebarOrder = [
-        'dashboard', 'pos', 'orders', 'purchases', 'finance', 'products', 
+        'dashboard', 'pos', 'dailySalon', 'orders', 'purchases', 'finance', 'products', 
         'reports', 'financialSummary', 'returnRequests', 'requestedBooks', 
         'expenses', 'customers', 'suppliers', 'tillCloseouts', 'users', 
         'backups', 'auditLogs', 'recycleBin', 'settings'
     ];
-    const cashierSidebarOrder = ['pos', 'orders', 'cashierTools'];
+    const cashierSidebarOrder = ['pos', 'dailySalon', 'orders', 'cashierTools'];
     const sidebarOrder = currentUser.role === 'admin' ? adminSidebarOrder : cashierSidebarOrder;
 
     return (

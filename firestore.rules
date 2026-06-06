@@ -155,5 +155,17 @@ service cloud.firestore {
       allow update: if isAdmin();
       allow delete: if false;
     }
+
+    match /poems/{poemId} {
+      allow read, write: if isSignedIn();
+    }
+
+    match /dailyTasks/{taskId} {
+      allow read, write: if isSignedIn();
+    }
+
+    match /readingProgress/{progressId} {
+      allow read, write: if isSignedIn();
+    }
   }
 }

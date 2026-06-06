@@ -6,3 +6,4 @@ export * from './auditService';
 export * from './usersService';
 export * from './suppliersService';
 export * from './purchasesService';
+export * from './dailySalonService';
