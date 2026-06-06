@@ -23,3 +23,10 @@ import {
   Sparkles,
   Trash2,
   X,
+} from 'lucide-react';
+import type { DailyTask, Poem, Product, ReadingProgress, User } from '../types';
+import { dailySalonService } from '../services/dailySalonService';
+
+interface DailySalonViewVIPProps {
+  products: Product[];
+  currentUser: User
