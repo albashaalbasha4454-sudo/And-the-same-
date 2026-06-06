@@ -171,11 +171,14 @@ export const FirebaseProvider: React.FC<{ children: React.ReactNode }> = ({ chil
         setLoading(true);
         setError(null);
 
-        if (systemCode !== SYSTEM_CODE) {
+        const cleanSystemCode = systemCode.trim().toUpperCase();
+        if (cleanSystemCode !== SYSTEM_CODE) {
             setError('رقم الشركة (الرمز) غير صحيح.');
             setLoading(false);
             return false;
         }
+
+        const cleanUsername = username.trim();
 
         try {
             let userData: User | null = null;
@@ -183,7 +186,7 @@ export const FirebaseProvider: React.FC<{ children: React.ReactNode }> = ({ chil
 
             try {
                 const usersRef = collection(db, 'users');
-                const q = query(usersRef, where('username', '==', username));
+                const q = query(usersRef, where('username', '==', cleanUsername));
                 const querySnapshot = await getDocs(q);
 
                 if (!querySnapshot.empty) {
@@ -196,7 +199,7 @@ export const FirebaseProvider: React.FC<{ children: React.ReactNode }> = ({ chil
                 if (cache) {
                     try {
                         const usersList = JSON.parse(cache) as User[];
-                        const matched = usersList.find(u => u.username === username);
+                        const matched = usersList.find(u => u.username === cleanUsername);
                         if (matched) {
                             const { id, ...rest } = matched;
                             userData = rest as User;
